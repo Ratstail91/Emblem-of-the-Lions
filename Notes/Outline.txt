@@ -1,0 +1,25 @@
+There seems to be a problem with pagination I call "corner dancing".
+
+The map is made up of "Regions", which are in turn made up of "Tiles". Each region is either loaded or generated
+when they are within one Region of the player. When a Region is too far away from the player, it is saved to the
+disk again (or simply unloaded based on the game). This is the most logical way to handle smooth pagination.
+
+The problem is, how far away should the player be when a Region is unloaded? The reason a Region is loaded within
+one Region's distance is so that when the player stands on the edge of one region, they can see the next. If the
+player steps into another Region, the next Region beyond it is loaded, and the regions way to far behind it are
+unloaded.
+
+However, if the player finds the boarder between Regions, they could possibly force many  Region loads and unloads
+in quick succession. The Regions may not be very big, but given a number of layers that can mean a hell of a lot of
+information moving from memory to hard disk and back. The problem gets even worse if the player runs in circles
+around the corners of the Regions, thus why it's called "corner dancing".
+
+The obvious solution to this is to extend the distance at which a Region is unloaded. However, too many Regions
+loaded into memory at once could cause problems. So, through experimentation, the best solution would be to unload
+the Regions at a distance of 3 and greater. This means no more than 16 Regions are loaded at once.
+
+Another problem with pagination is the fact that I can't use a ranged based data structure, since so many Regions
+will be loaded and unloaded over the duration of the game. Inside Region, I've used a simple array of Tiles. I
+can't do this in MapUtility. Instead, I could have a std::vector of pointers to Region. I know the maximum number
+of these pointers will be 16, and I know that std::vector can handle this degree of rearranging automatically.
+Using this, I can iterate through the vector and use utility functions to handle the indevidual Regions as needed.

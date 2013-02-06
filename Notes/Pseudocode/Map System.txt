@@ -18,13 +18,14 @@ Several layers:
 
 -------------------------
 
+Tile:
+	x, y
+	val
+end
+
 Region:
-	-Uint16 xCount, yCount, zCount
-	-Uint16 ***data
-	
 	LoadData(fname)
 	SaveData(fname)
-	
 	NewData(x, y, z)
 	DeleteData()
 	
@@ -34,51 +35,37 @@ Region:
 	GetX()
 	GetY()
 	GetZ()
+	GetSize()
+	
+	Begin()
+	End()
+	
+	int xCount, yCount, zCount, size
+	Region* data
 end
 
 MapUtility:
-	-string tname
-	-Image tileset
-	-Uint16 xCount, yCount //regions
-	-Uint16 rWidth, rHeight, rDepth //these MUST match the regions' values
-	-Region **data
-	
-	-CheckValidData() //checks that everything is correctly formatted
-	
 	LoadMap(fname)
 	SaveMap(fname)
-	
-	NewMap(xCount, yCount, rWidth, rHeight, rDepth)
+	NewMap(mapX, mapY, regionX, regionY, regionZ)
 	DeleteMap()
 	
-	DrawTo(screen, x, y)
-	
-	SetTile(x, y, z, v) //relative to the map
-	GetTile(x, y, z)
+	SetTile(x, y, z, v)
+	GetTile(x, y, z) //inefficient?
 	GetRegion(x, y)
+	??
 	
-	//one tileset for an entire map
-	SetTileset(tname)
-	GetTileset()
-end
+	TODO: Region needs a X & Y members. See Outline.txt
 
 -------------------------
 
-Formats:
+Pagination Pseudocode
 
-Region:
-	xCount yCount zCount
-	[data]
+One dimension:
+	If a Region is at a distance of 1 or less, load it
+	If a Region is at a distance of 3 or more, unload it
 end
 
-Map:
-	tname
-	tWidth tHeight
-	xCount yCount rWidth rHeight rDepth
-	[rname]
+Two dimensions:
+	It's simpler to just use the 1D system in both directions. Don't worry about it too much.
 end
-
--------------------------
-
-Load tile name
-Load tile width & tile height
