@@ -6,6 +6,7 @@
 Region::Region() {
 	xCount = yCount = zCount = 0;
 	data = NULL;
+	iterator = data;
 }
 
 Region::~Region() {
@@ -33,10 +34,19 @@ void Region::LoadData(const char* fname) {
 	for (int j = 0; j < yCount; j++) {
 		for (int i = 0; i < xCount; i++) {
 			for (int k = 0; k < zCount; k++) {
+				// I'm not sure if you can still use the syntactic sugar here
+				// if it breaks, switch the following two lines over
+				// also note that my maths could be way off, 3D arrays are finicky
+				// and you'd be much better off using a Tile datatype that specifies
+				// coordinates and has an iterator (so that Region can just call Tile's iterator)
+				// rather than using a Uint16 as an attempt at premature optimisation
+				// is >> *(data + i*(j*k) + j*k + k)
 				is >> data[i][j][k];
 			}
 		}
 	}
+	
+	iterator = data; // iterator should start where data starts
 
 	//cleanup
 	is.close();
@@ -137,4 +147,27 @@ Uint16 Region::GetY() {
 
 Uint16 Region::GetZ() {
 	return zCount;
+}
+
+// in theory, this should work like any postfix increment, but if it doesn't that's because
+// the 'tmp' pointer is being updated by the line "iterator++", which shouldn't happen
+// so, the intended behaviour is to return the current "tile", and iterate the internal
+// representation of what the "current" tile means.  Note that I haven't done any
+// bounds checking, you'll have to implement that yourself.
+Uint16 Region::operator++() {
+	Uint16* tmp = iterator;
+	iterator++;
+	return tmp;
+}
+
+// actually I'll leave this to you to implement, sorry about that!
+bool Region::end() {
+	// return if "iterator" points past the end of "data".  If I were you, I'd use a sentinel, or maintain
+	// a "tile count" (maybe you already do, I haven't checked) and a separate iterator that just tracks
+	// the position of 'iterator'.
+}
+
+// this one was really simple
+void Region::rewind() {
+	iterator = data;
 }

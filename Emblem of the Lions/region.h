@@ -20,10 +20,18 @@ public:
 	Uint16 GetX();
 	Uint16 GetY();
 	Uint16 GetZ();
+	
+	Uint16 operator++(void);
+	bool end(void);
+	bool rewind(void);
+	
 
 private:
 	Uint16 xCount, yCount, zCount;
-	Uint16 ***data;
+	// you shouldn't even need a ** unless you want to pass by-reference-to-reference, whoever told you
+	// that *** is a "3D array" needs to be taken out back and shot.
+	Uint16 *data;
+	Uint16 *iterator;
 };
 
 #endif
