@@ -4,9 +4,8 @@
 #include <fstream>
 
 Region::Region() {
-	xCount = yCount = zCount = 0;
+	xCount = yCount = zCount = size = 0;
 	data = NULL;
-	iterator = data;
 }
 
 Region::~Region() {
@@ -26,29 +25,28 @@ void Region::LoadData(const char* fname) {
 	is >> xCount;
 	is >> yCount;
 	is >> zCount;
+	size = xCount * yCount * zCount;
 
-	//generate the array
+	if (size == 0) {
+		is.close();
+		throw(std::runtime_error("No region data to load or region format is corrupted"));
+	}
+
 	NewData(xCount, yCount, zCount);
 
-	//load the raw data (y axis first)
-	for (int j = 0; j < yCount; j++) {
-		for (int i = 0; i < xCount; i++) {
+	//NOTE: This doesn't use a ranged based loop to make sure the x & y values are set
+	//NOTE, TODO: This is probably a temptorary format
+	Tile::iterator it = Begin();
+	for (int i = 0; i < xCount; i++) {
+		for (int j = 0; j < yCount; j++) {
 			for (int k = 0; k < zCount; k++) {
-				// I'm not sure if you can still use the syntactic sugar here
-				// if it breaks, switch the following two lines over
-				// also note that my maths could be way off, 3D arrays are finicky
-				// and you'd be much better off using a Tile datatype that specifies
-				// coordinates and has an iterator (so that Region can just call Tile's iterator)
-				// rather than using a Uint16 as an attempt at premature optimisation
-				// is >> *(data + i*(j*k) + j*k + k)
-				is >> data[i][j][k];
+				it->x = i;
+				it->y = j;
+				is >> it->val;
 			}
 		}
 	}
-	
-	iterator = data; // iterator should start where data starts
 
-	//cleanup
 	is.close();
 }
 
@@ -68,106 +66,87 @@ void Region::SaveData(const char* fname) {
 	for (int j = 0; j < yCount; j++) {
 		for (int i = 0; i < xCount; i++) {
 			for (int k = 0; k < zCount; k++) {
-				os << data[i][j][k] << " ";
+				os << GetTile(i,j,k)->val << " ";
 			}
 			os << " ";
 		}
 		os << std::endl;
 	}
 
-	//cleanup
 	os.close();
 }
 
-void Region::NewData(Uint16 x, Uint16 y, Uint16 z) {
+void Region::NewData(int x, int y, int z) {
 	if (data != NULL)
 		DeleteData();
 
 	xCount = x;
 	yCount = y;
 	zCount = z;
+	size = xCount * yCount * zCount;
 
-	data = new Uint16**[xCount];
+	data = new Tile[size];
 
-	for (int i = 0; i < xCount; i++) {
-		data[i] = new Uint16*[yCount];
-
-		for (int j = 0; j < yCount; j++) {
-			data[i][j] = new Uint16[zCount];
-
-			for (int k = 0; k < zCount; k++) {
-				//zero the array
-				data[i][j][k] = 0;
-			}
-		}
-	}
+/*	//DEBUG: test data
+	int i = 0;
+	for (Tile::iterator it = Begin(); it != End(); it++, i++) {
+		it->val = i;
+	}*/
 }
 
 void Region::DeleteData() {
-	if (data == NULL) return;
-
-	for (int i = 0; i < xCount; i++) {
-		for (int j = 0; j < yCount; j++) {
-			delete[] data[i][j];
-		}
-		delete[] data[i];
-	}
 	delete[] data;
+	xCount = yCount = zCount = size = 0;
 	data = NULL;
-	xCount = yCount = zCount = 0;
+
 }
 
-Uint16 Region::SetTile(Uint16 x, Uint16 y, Uint16 z, Uint16 v) {
+Tile::iterator Region::SetTile(int x, int y, int z, int v) {
 	if (data == NULL)
 		throw(std::logic_error("No region data to set"));
 
-	if (x >= xCount || y >= yCount || z >= zCount)
+	//range is 0 to x - 1 inclusive, where x is the specified dimension
+	if (x >= xCount || y >= yCount || z >= zCount || x < 0 || y < 0 || z < 0)
 		throw(std::out_of_range("Specified tile index is out of range"));
 
-	data[x][y][z] = v;
+	//NOTE: data is stored as though it were data[x][y][z]
+	(data + (x * yCount * zCount) + (y * zCount) + z)->val = v;
+
+	return data + (x * yCount * zCount) + (y * zCount) + z;
 }
 
-Uint16 Region::GetTile(Uint16 x, Uint16 y, Uint16 z) {
+Tile::iterator Region::GetTile(int x, int y, int z) {
 	if (data == NULL)
 		throw(std::logic_error("No region data to retrieve"));
 
-	if (x >= xCount || y >= yCount || z >= zCount)
+	//range is 0 to x - 1 inclusive, where x is the specified dimension
+	if (x >= xCount || y >= yCount || z >= zCount || x < 0 || y < 0 || z < 0)
 		throw(std::out_of_range("Specified tile index is out of range"));
 
-	return data[x][y][z];
+	//NOTE: data is stored as though it were data[x][y][z]
+	return data + (x * yCount * zCount) + (y * zCount) + z;
 }
 
-Uint16 Region::GetX() {
+int Region::GetX() const {
 	return xCount;
 }
 
-Uint16 Region::GetY() {
+int Region::GetY() const {
 	return yCount;
 }
 
-Uint16 Region::GetZ() {
+int Region::GetZ() const {
 	return zCount;
 }
 
-// in theory, this should work like any postfix increment, but if it doesn't that's because
-// the 'tmp' pointer is being updated by the line "iterator++", which shouldn't happen
-// so, the intended behaviour is to return the current "tile", and iterate the internal
-// representation of what the "current" tile means.  Note that I haven't done any
-// bounds checking, you'll have to implement that yourself.
-Uint16 Region::operator++() {
-	Uint16* tmp = iterator;
-	iterator++;
-	return tmp;
+int Region::GetSize() const {
+	return size;
 }
 
-// actually I'll leave this to you to implement, sorry about that!
-bool Region::end() {
-	// return if "iterator" points past the end of "data".  If I were you, I'd use a sentinel, or maintain
-	// a "tile count" (maybe you already do, I haven't checked) and a separate iterator that just tracks
-	// the position of 'iterator'.
+Tile::iterator Region::Begin() const {
+	return data;
 }
 
-// this one was really simple
-void Region::rewind() {
-	iterator = data;
+Tile::iterator Region::End() const {
+	return data + size;
 }

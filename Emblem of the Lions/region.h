@@ -1,7 +1,7 @@
 #ifndef KR_REGION_H_
 #define KR_RAGION_H_
 
-#include "SDL.h"
+#include "tile.h"
 
 class Region {
 public:
@@ -11,27 +11,23 @@ public:
 	void LoadData(const char* fname);
 	void SaveData(const char* fname);
 
-	void NewData(Uint16 x, Uint16 y, Uint16 z);
+	void NewData(int x, int y, int z);
 	void DeleteData();
 
-	Uint16 SetTile(Uint16 x, Uint16 y, Uint16 z, Uint16 v);
-	Uint16 GetTile(Uint16 x, Uint16 y, Uint16 z);
+	Tile::iterator SetTile(int x, int y, int z, int v);
+	Tile::iterator GetTile(int x, int y, int z);
 
-	Uint16 GetX();
-	Uint16 GetY();
-	Uint16 GetZ();
-	
-	Uint16 operator++(void);
-	bool end(void);
-	bool rewind(void);
-	
+	int GetX() const;
+	int GetY() const;
+	int GetZ() const;
+	int GetSize() const;
+
+	Tile::iterator Begin() const;
+	Tile::iterator End() const;
 
 private:
-	Uint16 xCount, yCount, zCount;
-	// you shouldn't even need a ** unless you want to pass by-reference-to-reference, whoever told you
-	// that *** is a "3D array" needs to be taken out back and shot.
-	Uint16 *data;
-	Uint16 *iterator;
+	int xCount, yCount, zCount, size;
+	Tile* data;
 };
 
 #endif

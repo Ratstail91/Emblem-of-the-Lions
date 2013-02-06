@@ -188,82 +188,6 @@
 			</Filter>
 		</Filter>
 		<Filter
-			Name="Scene System"
-			>
-			<File
-				RelativePath=".\scene_list.h"
-				>
-			</File>
-			<Filter
-				Name="-Scene Manager"
-				>
-				<File
-					RelativePath=".\scene_manager.cpp"
-					>
-					<FileConfiguration
-						Name="Release|Win32"
-						ExcludedFromBuild="true"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath=".\scene_manager.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="Main Menu"
-				>
-				<File
-					RelativePath=".\main_menu.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\main_menu.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="-Scene"
-				>
-				<File
-					RelativePath=".\scene.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\scene.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="Overworld"
-				>
-				<File
-					RelativePath=".\overworld.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\overworld.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="Test Scene"
-				>
-				<File
-					RelativePath=".\test_scene.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\test_scene.h"
-					>
-				</File>
-			</Filter>
-		</Filter>
-		<Filter
 			Name="Codebase"
 			>
 			<File
@@ -344,15 +268,39 @@
 				<File
 					RelativePath=".\map_utility.cpp"
 					>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\map_utility.h"
+					>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+				</File>
+			</Filter>
+			<Filter
+				Name="Tile"
+				>
+				<File
+					RelativePath=".\tile.h"
 					>
 				</File>
 			</Filter>
 		</Filter>
 		<File
-			RelativePath=".\debug.cpp"
+			RelativePath=".\main.cpp"
 			>
 		</File>
 	</Files>
