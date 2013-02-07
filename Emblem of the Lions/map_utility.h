@@ -29,6 +29,12 @@ public:
 	Tile* SetTile(int x, int y, int z, int v);
 	Tile* GetTile(int x, int y, int z);
 
+	int GetRegionX() const;
+	int GetRegionY() const;
+	int GetRegionZ() const;
+
+	std::string GetMapName() const;
+
 private:
 	int regionX, regionY, regionZ;
 	std::vector<Region*> regionList;

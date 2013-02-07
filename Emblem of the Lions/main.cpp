@@ -19,7 +19,13 @@ int SDL_main(int, char**) {
 
 	try {
 		cout << "Creating a new map" << endl;
-		map.NewMap("mapname", 40, 40, 3);
+		map.NewMap("mapname", 40, 50, 3);
+
+		cout << "The map's format data is as follows" << endl;
+		cout << "Name: " << map.GetMapName() << endl;
+		cout << "Region X: " << map.GetRegionX() << endl;
+		cout << "Region Y: " << map.GetRegionY() << endl;
+		cout << "Region Z: " << map.GetRegionZ() << endl;
 
 		cout << "Saving the map" << endl;
 		map.SaveMap("mapname");

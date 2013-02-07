@@ -105,3 +105,19 @@ Tile* MapUtility::SetTile(int x, int y, int z, int v) {
 Tile* MapUtility::GetTile(int x, int y, int z) {
 	//TODO
 }
+
+int MapUtility::GetRegionX() const {
+	return regionX;
+}
+
+int MapUtility::GetRegionY() const {
+	return regionY;
+}
+
+int MapUtility::GetRegionZ() const {
+	return regionZ;
+}
+
+std::string MapUtility::GetMapName() const {
+	return mapName;
+}
