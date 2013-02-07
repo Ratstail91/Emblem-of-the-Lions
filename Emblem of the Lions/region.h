@@ -22,10 +22,16 @@ public:
 	int GetZ() const;
 	int GetSize() const;
 
+	int SetIndexX(int);
+	int SetIndexY(int);
+	int GetIndexX() const;
+	int GetIndexY() const;
+
 	Tile::iterator Begin() const;
 	Tile::iterator End() const;
 
 private:
+	int indexX, indexY;
 	int xCount, yCount, zCount, size;
 	Tile* data;
 };

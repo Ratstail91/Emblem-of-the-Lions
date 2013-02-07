@@ -19,7 +19,7 @@ Several layers:
 -------------------------
 
 Tile:
-	x, y
+	x, y, z
 	val
 end
 
@@ -37,35 +37,75 @@ Region:
 	GetZ()
 	GetSize()
 	
+	SetIndexX(indexX)
+	SetIndexY(indexY)
+	GetIndexX()
+	GetIndexY()
+	
 	Begin()
 	End()
 	
+	int indexX, indexY
 	int xCount, yCount, zCount, size
 	Region* data
 end
 
 MapUtility:
-	LoadMap(fname)
-	SaveMap(fname)
-	NewMap(mapX, mapY, regionX, regionY, regionZ)
-	DeleteMap()
+	LoadMap(mapname)
+	SaveMap(mapname) //save all regions to the .region files, later do the same for .tmp files
+	NewMap(regionX, regionY, regionZ) //region dimensions
+	DeleteMap() //clear out the memory, don't really *delete* it
 	
+	//control the list of regions
+	NewRegion		(indexX, indexY)
+	LoadRegion		(indexX, indexY)
+	SaveRegion		(indexX, indexY)
+	UnloadRegion	(indexX, indexY)
+	GetRegion		(indexX, indexY)
+	
+	//this is the process of unloading Regions that are out of sight
+	//it's best to call this only when the player crosses an edge line, but it should work at any time
+	//centerX and centerY are the indexes of the "center" region. This region is the watermark for
+	//loading and unloading other regions
+	//it could also have some min & max parameters, to dictate how close & far the cull limits are.
+	CullMap(centerX, centerY, min = 1, max = 2)
+	
+	//curry a long line
 	SetTile(x, y, z, v)
-	GetTile(x, y, z) //inefficient?
-	GetRegion(x, y)
-	??
+	GetTile(x, y, z)
 	
-	TODO: Region needs a X & Y members. See Outline.txt
+	int regionX, regionY, regionZ
+	std::vector<Region*> regionList
+	mapname //keep track of the map name
+end
 
 -------------------------
 
-Pagination Pseudocode
-
-One dimension:
+Pagination Pseudocode:
 	If a Region is at a distance of 1 or less, load it
 	If a Region is at a distance of 3 or more, unload it
 end
 
-Two dimensions:
-	It's simpler to just use the 1D system in both directions. Don't worry about it too much.
+-------------------------
+
+Save File Format
+
+The maps will be saved into their own directory. The file "index.txt" will hold the x, y and z values of the
+regions. Later it could hold other metadata. The values derived from this file are used to validate the region
+files. The region files are named as x.y.region where x is the region's x index, and y is it's y index.
+
+For large maps that are being edited, the regions can be stored as x.y.tmp until the map as a whole is saved.
+
+Directory
+	mapname/*.*
 end
+
+map file: index.txt
+	regionX regionY regionZ
+end
+
+region file: x.y.region
+	regionX regionY regionZ
+	[raw data] TODO figure out this data structure
+end
+

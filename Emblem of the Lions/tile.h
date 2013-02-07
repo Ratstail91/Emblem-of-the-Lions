@@ -6,10 +6,10 @@
 class Tile {
 public:
 	Tile() {
-		x = y = val = 0;
+		x = y = z = val = 0;
 	}
 
-	int x, y;
+	int x, y, z;
 	int val;
 
 	typedef Tile* iterator;

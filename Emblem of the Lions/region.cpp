@@ -4,6 +4,7 @@
 #include <fstream>
 
 Region::Region() {
+	indexX = indexY = 0;
 	xCount = yCount = zCount = size = 0;
 	data = NULL;
 }
@@ -35,13 +36,14 @@ void Region::LoadData(const char* fname) {
 	NewData(xCount, yCount, zCount);
 
 	//NOTE: This doesn't use a ranged based loop to make sure the x & y values are set
-	//NOTE, TODO: This is probably a temptorary format
+	//NOTE, TODO: This is probably a temporary format
 	Tile::iterator it = Begin();
 	for (int i = 0; i < xCount; i++) {
 		for (int j = 0; j < yCount; j++) {
 			for (int k = 0; k < zCount; k++) {
 				it->x = i;
 				it->y = j;
+				it->z = k;
 				is >> it->val;
 			}
 		}
@@ -141,6 +143,22 @@ int Region::GetZ() const {
 
 int Region::GetSize() const {
 	return size;
+}
+
+int Region::SetIndexX(int x) {
+	return indexX = x;
+}
+
+int Region::SetIndexY(int y) {
+	return indexY = y;
+}
+
+int Region::GetIndexX() const {
+	return indexX;
+}
+
+int Region::GetIndexY() const {
+	return indexY;
 }
 
 Tile::iterator Region::Begin() const {
