@@ -51,9 +51,9 @@ Region:
 end
 
 MapUtility:
-	LoadMap(mapname)
+	LoadMap(mapname) //mapname can include a directory path, but the files are handled automatically
 	SaveMap(mapname) //save all regions to the .region files, later do the same for .tmp files
-	NewMap(regionX, regionY, regionZ) //region dimensions
+	NewMap(mapname, regionX, regionY, regionZ) //region dimensions
 	DeleteMap() //clear out the memory, don't really *delete* it
 	
 	//control the list of regions
@@ -76,7 +76,7 @@ MapUtility:
 	
 	int regionX, regionY, regionZ
 	std::vector<Region*> regionList
-	mapname //keep track of the map name
+	string mapName //keep track of the map name
 end
 
 -------------------------
@@ -108,4 +108,14 @@ region file: x.y.region
 	regionX regionY regionZ
 	[raw data] TODO figure out this data structure
 end
+
+-------------------------
+
+Notes
+
+Although MapUtility::NewMap() and MapUtility::LoadMap() create and load the map, they don't create or load any
+Regions. That's upto either the user, or MapUtility::CullMap().
+
+It's possible to move MapUtility::CullMap() out of MapUtility, which would remove some specialized code from
+the module.
 
