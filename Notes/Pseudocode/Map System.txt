@@ -54,7 +54,8 @@ MapUtility:
 	LoadMap(mapname) //mapname can include a directory path, but the files are handled automatically
 	SaveMap(mapname) //save all regions to the .region files, later do the same for .tmp files
 	NewMap(mapname, regionX, regionY, regionZ) //region dimensions
-	DeleteMap() //clear out the memory, don't really *delete* it
+	FreeMap() //clear out the memory, don't really *delete* it
+	DeleteMap(mapname) //actually delete a map in the file directory
 	
 	//control the list of regions
 	NewRegion		(indexX, indexY)
