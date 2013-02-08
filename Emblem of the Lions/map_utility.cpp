@@ -3,6 +3,8 @@
 #include <stdexcept>
 #include <fstream>
 
+#include <direct.h>
+
 MapUtility::MapUtility() {
 	regionX = regionY = regionZ = 0;
 }
@@ -33,6 +35,7 @@ void MapUtility::SaveMap(const char* newName) {
 	if (!regionX || !regionY || !regionZ)
 		throw(std::logic_error("No map data to save"));
 
+	_mkdir(newName);
 	std::ofstream os((std::string(newName) + "/index.txt").c_str());
 
 	if (!os.is_open())
@@ -51,6 +54,7 @@ void MapUtility::NewMap(const char* n, int x, int y, int z) {
 
 	mapName = n;
 
+	_mkdir(mapName.c_str());
 	std::ifstream is((mapName + "/index.txt").c_str());
 
 	if (is.is_open()) {
