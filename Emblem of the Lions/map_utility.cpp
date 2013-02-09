@@ -10,12 +10,12 @@ MapUtility::MapUtility() {
 }
 
 MapUtility::~MapUtility() {
-	DeleteMap();
+	FreeMap();
 }
 
 void MapUtility::LoadMap(const char* n) {
 	if (regionX || regionY || regionZ)
-		DeleteMap();
+		FreeMap();
 
 	mapName = n;
 
@@ -50,7 +50,7 @@ void MapUtility::SaveMap(const char* newName) {
 
 void MapUtility::NewMap(const char* n, int x, int y, int z) {
 	if (regionX || regionY || regionZ)
-		DeleteMap();
+		FreeMap();
 
 	mapName = n;
 
@@ -68,7 +68,7 @@ void MapUtility::NewMap(const char* n, int x, int y, int z) {
 	regionZ = z;
 }
 
-void MapUtility::DeleteMap() {
+void MapUtility::FreeMap() {
 	regionX = regionY = regionZ = 0;
 	mapName.clear();
 	for (std::vector<Region*>::iterator it = regionList.begin(); it != regionList.end(); it++) {
@@ -76,6 +76,10 @@ void MapUtility::DeleteMap() {
 		delete (*it);
 	}
 	regionList.clear();
+}
+
+void MapUtility::DeleteMap(const char* mapname) {
+	//TODO
 }
 
 void MapUtility::NewRegion(int indexX, int indexY) {

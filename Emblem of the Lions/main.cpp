@@ -31,22 +31,22 @@ int SDL_main(int, char**) {
 		map.SaveMap("mapname");
 
 		cout << "Freeing the existing map" << endl;
-		map.DeleteMap();
+		map.FreeMap();
 
 		cout << "Loading the map again" << endl;
 		map.LoadMap("mapname");
 
 		cout << "Finally freeing the map again before closing" << endl;
-		map.DeleteMap();
+		map.FreeMap();
 	}
 	catch(runtime_error& e) {
 		cerr << "Runtime Error: " << e.what() << endl;
-		map.DeleteMap();
+		map.FreeMap();
 		return -1;
 	}
 	catch (exception& e) {
 		cerr << "Error: " << e.what() << endl;
-		map.DeleteMap();
+		map.FreeMap();
 		return -2;
 	}
 

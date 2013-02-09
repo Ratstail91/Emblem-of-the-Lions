@@ -14,8 +14,8 @@ public:
 	void LoadMap(const char* mapname);
 	void SaveMap(const char* mapname);
 	void NewMap(const char* mapname, int regionX, int regionY, int regionZ);
-	void DeleteMap(); //TODO: make the distinction between freeing and deleting a map
-
+	void FreeMap();
+	void DeleteMap(const char* mapname);
 
 	//control the list of Regions
 	void NewRegion(int indexX, int indexY);
