@@ -11,9 +11,9 @@ public:
 	MapUtility();
 	~MapUtility();
 
-	void LoadMap(const char* mapname);
-	void SaveMap(const char* mapname);
 	void NewMap(const char* mapname, int regionX, int regionY, int regionZ);
+	void LoadMap(const char* mapname);
+	void SaveMap();
 	void FreeMap();
 	void DeleteMap(const char* mapname);
 

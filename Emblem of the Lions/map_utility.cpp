@@ -4,6 +4,14 @@
 #include <fstream>
 
 #include <direct.h>
+#include <dirent.h>
+
+//*debug
+#include <iostream>
+using std::cout;
+using std::endl;
+using std::cerr;
+//*/
 
 MapUtility::MapUtility() {
 	regionX = regionY = regionZ = 0;
@@ -13,59 +21,83 @@ MapUtility::~MapUtility() {
 	FreeMap();
 }
 
-void MapUtility::LoadMap(const char* n) {
-	if (regionX || regionY || regionZ)
-		FreeMap();
-
-	mapName = n;
-
-	std::ifstream is((mapName + "/index.txt").c_str());
-
-	if (!is.is_open())
-		throw(std::runtime_error("Failed to load the map data"));
-
-	//TODO
-
-	is.close();
-
-	//TODO
-}
-
-void MapUtility::SaveMap(const char* newName) {
-	if (!regionX || !regionY || !regionZ)
-		throw(std::logic_error("No map data to save"));
-
-	_mkdir(newName);
-	std::ofstream os((std::string(newName) + "/index.txt").c_str());
-
-	if (!os.is_open())
-		throw(std::runtime_error("Failed to save the map data"));
-
-	//TODO
-
-	os.close();
-
-	//TODO
-}
-
 void MapUtility::NewMap(const char* n, int x, int y, int z) {
-	if (regionX || regionY || regionZ)
-		FreeMap();
-
-	mapName = n;
-
-	_mkdir(mapName.c_str());
-	std::ifstream is((mapName + "/index.txt").c_str());
-
-	if (is.is_open()) {
-		is.close();
-		mapName.clear();
+	if (!_chdir(n)) {
+		_chdir("..");
 		throw(std::runtime_error("A map of this name already exists"));
 	}
+
+	_mkdir(n);
+
+	mapName = n;
 
 	regionX = x;
 	regionY = y;
 	regionZ = z;
+
+	SaveMap();
+
+	//debug
+	regionList.push_back(new Region());
+
+	regionList[0]->NewData(regionX, regionY, regionZ);
+}
+
+void MapUtility::LoadMap(const char* n) {
+	if (_chdir(n))
+		throw(std::runtime_error("Failed to load the named map"));
+
+	std::ifstream is("index.txt");
+
+	if (!is.is_open()) {
+		_chdir("..");
+		throw(std::runtime_error("Failed to load the map data"));
+	}
+
+	if (regionX || regionY || regionZ)
+		FreeMap();
+
+	mapName = n;
+
+	is >> regionX;
+	is >> regionY;
+	is >> regionZ;
+
+	is.close();
+	_chdir("..");
+
+	//the next step is to load the regions independantly
+}
+
+void MapUtility::SaveMap() {
+	if (_chdir(mapName.c_str())) {
+		throw(std::runtime_error("Failed to save the map"));
+	}
+
+	std::ofstream os("index.txt");
+
+	if (!os.is_open()) {
+		_chdir("..");
+		throw(std::runtime_error("Failed to save the map index"));
+	}
+
+	os << regionX << " ";
+	os << regionY << " ";
+	os << regionZ << " ";
+
+	//other metadata later
+
+	char buffer[128];
+	for (std::vector<Region*>::iterator it = regionList.begin(); it != regionList.end(); it++) {
+		sprintf(buffer, "%d.%d.region", (*it)->GetIndexX(), (*it)->GetIndexY());
+
+		cout << "region name: " << buffer << endl;
+
+		(*it)->SaveData(buffer);
+	}
+
+	os.close();
+	_chdir("..");
 }
 
 void MapUtility::FreeMap() {
@@ -78,8 +110,29 @@ void MapUtility::FreeMap() {
 	regionList.clear();
 }
 
-void MapUtility::DeleteMap(const char* mapname) {
-	//TODO
+void MapUtility::DeleteMap(const char* n) {
+	if (mapName == n) {
+		//could add a locking system later
+		throw(std::logic_error("Cannot delete a map that is currently opened"));
+	}
+
+	if (_chdir(n)) {
+		//just a simple return, if there's no map to delete, just assume it has been deleted
+		return;
+//		throw(std::runtime_error("No map of this name to delete"));
+	}
+
+	DIR* dir = opendir(".");
+	dirent* ent;
+
+	while(ent = readdir(dir)) {
+		if (ent->d_type == DT_REG)
+			remove(ent->d_name);
+	}
+
+	closedir(dir);
+	_chdir("..");
+	_rmdir(n);
 }
 
 void MapUtility::NewRegion(int indexX, int indexY) {
