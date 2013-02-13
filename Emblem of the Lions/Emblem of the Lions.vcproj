@@ -263,21 +263,14 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="Map Utility"
+				Name="Map"
 				>
 				<File
-					RelativePath=".\map_utility.cpp"
+					RelativePath=".\map.cpp"
 					>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-						/>
-					</FileConfiguration>
 				</File>
 				<File
-					RelativePath=".\map_utility.h"
+					RelativePath=".\map.h"
 					>
 					<FileConfiguration
 						Name="Release|Win32"

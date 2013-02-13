@@ -1,21 +1,21 @@
-#ifndef KR_MAPUTILITY_H_
-#define KR_MAPUTILITY_H_
+#ifndef KR_MAP_H_
+#define KR_MAP_H_
 
 #include "region.h"
 
 #include <vector>
 #include <string>
 
-class MapUtility {
+class Map {
 public:
-	MapUtility();
-	~MapUtility();
+	Map();
+	~Map();
 
-	void NewMap(const char* mapname, int regionX, int regionY, int regionZ);
-	void LoadMap(const char* mapname);
-	void SaveMap();
-	void FreeMap();
-	void DeleteMap(const char* mapname);
+	void New(const char* mapname, int regionX, int regionY, int regionZ);
+	void Load(const char* mapname);
+	void Save();
+	void Free();
+	void Delete(const char* mapname);
 
 	//control the list of Regions
 	void NewRegion(int indexX, int indexY);
@@ -24,8 +24,6 @@ public:
 	void UnloadRegion(int indexX, int indexY);
 	Region* GetRegion(int indexX, int indexY);
 
-	void CullMap(int centerX, int centerY, int min = 1, int max = 2);
-
 	Tile* SetTile(int x, int y, int z, int v);
 	Tile* GetTile(int x, int y, int z);
 
@@ -33,7 +31,7 @@ public:
 	int GetRegionY() const;
 	int GetRegionZ() const;
 
-	std::string GetMapName() const;
+	std::string GetName() const;
 
 private:
 	int regionX, regionY, regionZ;

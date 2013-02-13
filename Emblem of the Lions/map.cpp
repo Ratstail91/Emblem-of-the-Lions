@@ -1,4 +1,4 @@
-#include "map_utility.h"
+#include "map.h"
 
 #include <stdexcept>
 #include <fstream>
@@ -6,22 +6,15 @@
 #include <direct.h>
 #include <dirent.h>
 
-//*debug
-#include <iostream>
-using std::cout;
-using std::endl;
-using std::cerr;
-//*/
-
-MapUtility::MapUtility() {
+Map::Map() {
 	regionX = regionY = regionZ = 0;
 }
 
-MapUtility::~MapUtility() {
-	FreeMap();
+Map::~Map() {
+	Free();
 }
 
-void MapUtility::NewMap(const char* n, int x, int y, int z) {
+void Map::New(const char* n, int x, int y, int z) {
 	if (!_chdir(n)) {
 		_chdir("..");
 		throw(std::runtime_error("A map of this name already exists"));
@@ -35,7 +28,7 @@ void MapUtility::NewMap(const char* n, int x, int y, int z) {
 	regionY = y;
 	regionZ = z;
 
-	SaveMap();
+	Save();
 
 	//debug
 	regionList.push_back(new Region());
@@ -43,7 +36,7 @@ void MapUtility::NewMap(const char* n, int x, int y, int z) {
 	regionList[0]->NewData(regionX, regionY, regionZ);
 }
 
-void MapUtility::LoadMap(const char* n) {
+void Map::Load(const char* n) {
 	if (_chdir(n))
 		throw(std::runtime_error("Failed to load the named map"));
 
@@ -55,7 +48,7 @@ void MapUtility::LoadMap(const char* n) {
 	}
 
 	if (regionX || regionY || regionZ)
-		FreeMap();
+		Free();
 
 	mapName = n;
 
@@ -69,7 +62,7 @@ void MapUtility::LoadMap(const char* n) {
 	//the next step is to load the regions independantly
 }
 
-void MapUtility::SaveMap() {
+void Map::Save() {
 	if (_chdir(mapName.c_str())) {
 		throw(std::runtime_error("Failed to save the map"));
 	}
@@ -90,9 +83,6 @@ void MapUtility::SaveMap() {
 	char buffer[128];
 	for (std::vector<Region*>::iterator it = regionList.begin(); it != regionList.end(); it++) {
 		sprintf(buffer, "%d.%d.region", (*it)->GetIndexX(), (*it)->GetIndexY());
-
-		cout << "region name: " << buffer << endl;
-
 		(*it)->SaveData(buffer);
 	}
 
@@ -100,7 +90,7 @@ void MapUtility::SaveMap() {
 	_chdir("..");
 }
 
-void MapUtility::FreeMap() {
+void Map::Free() {
 	regionX = regionY = regionZ = 0;
 	mapName.clear();
 	for (std::vector<Region*>::iterator it = regionList.begin(); it != regionList.end(); it++) {
@@ -110,7 +100,7 @@ void MapUtility::FreeMap() {
 	regionList.clear();
 }
 
-void MapUtility::DeleteMap(const char* n) {
+void Map::Delete(const char* n) {
 	if (mapName == n) {
 		//could add a locking system later
 		throw(std::logic_error("Cannot delete a map that is currently opened"));
@@ -135,50 +125,46 @@ void MapUtility::DeleteMap(const char* n) {
 	_rmdir(n);
 }
 
-void MapUtility::NewRegion(int indexX, int indexY) {
+void Map::NewRegion(int indexX, int indexY) {
 	//TODO
 }
 
-void MapUtility::LoadRegion(int indexX, int indexY) {
+void Map::LoadRegion(int indexX, int indexY) {
  	//TODO
  }
 
-void MapUtility::SaveRegion(int indexX, int indexY) {
+void Map::SaveRegion(int indexX, int indexY) {
 	//TODO
 }
 
-void MapUtility::UnloadRegion(int indexX, int indexY) {
+void Map::UnloadRegion(int indexX, int indexY) {
 	//TODO
 }
 
-Region* MapUtility::GetRegion(int indexX, int indexY) {
+Region* Map::GetRegion(int indexX, int indexY) {
 	//TODO
 }
 
-void MapUtility::CullMap(int centerX, int centerY, int min, int max) {
+Tile* Map::SetTile(int x, int y, int z, int v) {
 	//TODO
 }
 
-Tile* MapUtility::SetTile(int x, int y, int z, int v) {
+Tile* Map::GetTile(int x, int y, int z) {
 	//TODO
 }
 
-Tile* MapUtility::GetTile(int x, int y, int z) {
-	//TODO
-}
-
-int MapUtility::GetRegionX() const {
+int Map::GetRegionX() const {
 	return regionX;
 }
 
-int MapUtility::GetRegionY() const {
+int Map::GetRegionY() const {
 	return regionY;
 }
 
-int MapUtility::GetRegionZ() const {
+int Map::GetRegionZ() const {
 	return regionZ;
 }
 
-std::string MapUtility::GetMapName() const {
+std::string Map::GetName() const {
 	return mapName;
 }
