@@ -37,7 +37,7 @@ void Region::LoadData(const char* fname) {
 
 	//NOTE: This doesn't use a ranged based loop to make sure the x & y values are set
 	//NOTE, TODO: This is probably a temporary format
-	Tile::iterator it = Begin();
+	Region::iterator it = Begin();
 	for (int i = 0; i < xCount; i++) {
 		for (int j = 0; j < yCount; j++) {
 			for (int k = 0; k < zCount; k++) {
@@ -103,7 +103,7 @@ void Region::DeleteData() {
 
 }
 
-Tile::iterator Region::SetTile(int x, int y, int z, int v) {
+Tile* Region::SetTile(int x, int y, int z, int v) {
 	if (data == NULL)
 		throw(std::logic_error("No region data to set"));
 
@@ -117,7 +117,7 @@ Tile::iterator Region::SetTile(int x, int y, int z, int v) {
 	return data + (x * yCount * zCount) + (y * zCount) + z;
 }
 
-Tile::iterator Region::GetTile(int x, int y, int z) {
+Tile* Region::GetTile(int x, int y, int z) {
 	if (data == NULL)
 		throw(std::logic_error("No region data to retrieve"));
 
@@ -161,10 +161,10 @@ int Region::GetIndexY() const {
 	return indexY;
 }
 
-Tile::iterator Region::Begin() const {
+Tile* Region::Begin() const {
 	return data;
 }
 
-Tile::iterator Region::End() const {
+Tile* Region::End() const {
 	return data + size;
 }

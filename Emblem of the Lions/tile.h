@@ -11,8 +11,6 @@ public:
 
 	int x, y, z;
 	int val;
-
-	typedef Tile* iterator;
 };
 
 #endif

@@ -14,8 +14,8 @@ public:
 	void NewData(int x, int y, int z);
 	void DeleteData();
 
-	Tile::iterator SetTile(int x, int y, int z, int v);
-	Tile::iterator GetTile(int x, int y, int z);
+	Tile* SetTile(int x, int y, int z, int v);
+	Tile* GetTile(int x, int y, int z);
 
 	int GetX() const;
 	int GetY() const;
@@ -27,8 +27,9 @@ public:
 	int GetIndexX() const;
 	int GetIndexY() const;
 
-	Tile::iterator Begin() const;
-	Tile::iterator End() const;
+	Tile* Begin() const;
+	Tile* End() const;
+	typedef Tile* iterator;
 
 private:
 	int indexX, indexY;
