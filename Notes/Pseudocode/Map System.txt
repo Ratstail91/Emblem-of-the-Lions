@@ -112,8 +112,13 @@ end
 
 -------------------------
 
-Notes
+Region Management
 
-It's possible to move MapUtility::CullMap() out of MapUtility, which would remove some specialized code from
-the module.
+CheckRegionExists(x, y)
+CheckRegionLoaded(x, y)
 
+NewRegion(x, y)
+LoadRegion(x, y)
+SaveRegion(x, y)
+UnloadRegion(x, y) //save first
+GetRegion(x, y)

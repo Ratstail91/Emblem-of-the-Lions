@@ -11,11 +11,11 @@ public:
 	Map();
 	~Map();
 
-	void New(const char* mapname, int regionX, int regionY, int regionZ);
-	void Load(const char* mapname);
+	void New(const char* mapdir, int regionX, int regionY, int regionZ);
+	void Load(const char* mapdir);
 	void Save();
 	void Free();
-	void Delete(const char* mapname);
+	void Delete(const char* mapdir);
 
 	//control the list of Regions
 	void NewRegion(int indexX, int indexY);
@@ -36,7 +36,7 @@ public:
 private:
 	int regionX, regionY, regionZ;
 	std::vector<Region*> regionList;
-	std::string mapName;
+	std::string mapDir;
 };
 
 #endif

@@ -3,7 +3,6 @@
 #include <stdexcept>
 #include <fstream>
 
-#include <direct.h>
 #include <dirent.h>
 
 Map::Map() {
@@ -14,7 +13,7 @@ Map::~Map() {
 	Free();
 }
 
-void Map::New(const char* n, int x, int y, int z) {
+void Map::New(const char* mapdir, int x, int y, int z) {
 	if (!_chdir(n)) {
 		_chdir("..");
 		throw(std::runtime_error("A map of this name already exists"));
@@ -36,7 +35,7 @@ void Map::New(const char* n, int x, int y, int z) {
 	regionList[0]->NewData(regionX, regionY, regionZ);
 }
 
-void Map::Load(const char* n) {
+void Map::Load(const char* mapdir) {
 	if (_chdir(n))
 		throw(std::runtime_error("Failed to load the named map"));
 
@@ -100,7 +99,7 @@ void Map::Free() {
 	regionList.clear();
 }
 
-void Map::Delete(const char* n) {
+void Map::Delete(const char* mapdir) {
 	if (mapName == n) {
 		//could add a locking system later
 		throw(std::logic_error("Cannot delete a map that is currently opened"));
