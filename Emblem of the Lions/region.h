@@ -8,18 +8,17 @@ public:
 	Region();
 	~Region();
 
-	void LoadData(const char* fname);
-	void SaveData(const char* fname);
-
-	void NewData(int x, int y, int z);
-	void DeleteData();
+	void Load	(const char* fname);
+	void Save	(const char* fname);
+	void New	(int width, int height, int depth);
+	void Unload	();
 
 	Tile* SetTile(int x, int y, int z, int v);
 	Tile* GetTile(int x, int y, int z);
 
-	int GetX() const;
-	int GetY() const;
-	int GetZ() const;
+	int GetWidth() const;
+	int GetHeight() const;
+	int GetDepth() const;
 	int GetSize() const;
 
 	int SetIndexX(int);
@@ -27,13 +26,14 @@ public:
 	int GetIndexX() const;
 	int GetIndexY() const;
 
+	//TODO: C++11 compat
 	Tile* Begin() const;
 	Tile* End() const;
 	typedef Tile* iterator;
 
 private:
 	int indexX, indexY;
-	int xCount, yCount, zCount, size;
+	int width, height, depth, size;
 	Tile* data;
 };
 

@@ -1,0 +1,16 @@
+MapPersister:
+
+This thing needs to have a simple to use interface, abstracting away the back end
+
+Functionality:
+	Load Map(name)
+	Save Map(name)
+	New Map (format & seed?)
+	Delete Map
+	Copy Map
+	
+	DrawTo(screen, camX, camY)
+	GetTile(x, y, z)
+	SetTile(x, y, z, v)
+end
+

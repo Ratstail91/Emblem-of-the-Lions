@@ -5,17 +5,17 @@
 
 Region::Region() {
 	indexX = indexY = 0;
-	xCount = yCount = zCount = size = 0;
+	width = height = depth = size = 0;
 	data = NULL;
 }
 
 Region::~Region() {
-	DeleteData();
+	Unload();
 }
 
-void Region::LoadData(const char* fname) {
+void Region::Load(const char* fname) {
 	if (data != NULL)
-		DeleteData();
+		Unload();
 
 	std::ifstream is(fname);
 
@@ -23,28 +23,29 @@ void Region::LoadData(const char* fname) {
 		throw(std::runtime_error("Failed to load region data"));
 
 	//load the format data
-	is >> xCount;
-	is >> yCount;
-	is >> zCount;
-	size = xCount * yCount * zCount;
+	is >> width;
+	is >> height;
+	is >> depth;
+	size = width * height * depth;
 
 	if (size == 0) {
 		is.close();
 		throw(std::runtime_error("No region data to load or region format is corrupted"));
 	}
 
-	NewData(xCount, yCount, zCount);
+	New(width, height, depth);
 
-	//NOTE: This doesn't use a ranged based loop to make sure the x & y values are set
 	//NOTE, TODO: This is probably a temporary format
+	//load the raw data
 	Region::iterator it = Begin();
-	for (int i = 0; i < xCount; i++) {
-		for (int j = 0; j < yCount; j++) {
-			for (int k = 0; k < zCount; k++) {
+	for (int i = 0; i < width; i++) {
+		for (int j = 0; j < height; j++) {
+			for (int k = 0; k < depth; k++) {
 				it->x = i;
 				it->y = j;
 				it->z = k;
 				is >> it->val;
+				it++;
 			}
 		}
 	}
@@ -52,7 +53,7 @@ void Region::LoadData(const char* fname) {
 	is.close();
 }
 
-void Region::SaveData(const char* fname) {
+void Region::Save(const char* fname) {
 	if (data == NULL)
 		throw(std::logic_error("No region data to save"));
 
@@ -62,15 +63,17 @@ void Region::SaveData(const char* fname) {
 		throw(std::runtime_error("Failed to save region data"));
 
 	//save the format data
-	os << xCount << " " << yCount << " " << zCount << std::endl;
+	os << width << " " << height << " " << depth << std::endl;
 
-	//save the raw data (y axis first)
-	for (int j = 0; j < yCount; j++) {
-		for (int i = 0; i < xCount; i++) {
-			for (int k = 0; k < zCount; k++) {
-				os << GetTile(i,j,k)->val << " ";
+	//save the raw data
+	Region::iterator it = Begin();
+	for (int i = 0; i < width; i++) {
+		for (int j = 0; j < height; j++) {
+			for (int k = 0; k < depth; k++) {
+				os << it->val << " ";
+				it++;
 			}
-			os << " ";
+			os << "\t";
 		}
 		os << std::endl;
 	}
@@ -78,14 +81,14 @@ void Region::SaveData(const char* fname) {
 	os.close();
 }
 
-void Region::NewData(int x, int y, int z) {
+void Region::New(int x, int y, int z) {
 	if (data != NULL)
-		DeleteData();
+		Unload();
 
-	xCount = x;
-	yCount = y;
-	zCount = z;
-	size = xCount * yCount * zCount;
+	width = x;
+	height = y;
+	depth = z;
+	size = width * height * depth;
 
 	data = new Tile[size];
 
@@ -96,11 +99,10 @@ void Region::NewData(int x, int y, int z) {
 	}*/
 }
 
-void Region::DeleteData() {
+void Region::Unload() {
 	delete[] data;
-	xCount = yCount = zCount = size = 0;
+	width = height = depth = size = 0;
 	data = NULL;
-
 }
 
 Tile* Region::SetTile(int x, int y, int z, int v) {
@@ -108,13 +110,14 @@ Tile* Region::SetTile(int x, int y, int z, int v) {
 		throw(std::logic_error("No region data to set"));
 
 	//range is 0 to x - 1 inclusive, where x is the specified dimension
-	if (x >= xCount || y >= yCount || z >= zCount || x < 0 || y < 0 || z < 0)
+	if (x >= width || y >= height || z >= depth || x < 0 || y < 0 || z < 0)
 		throw(std::out_of_range("Specified tile index is out of range"));
 
 	//NOTE: data is stored as though it were data[x][y][z]
-	(data + (x * yCount * zCount) + (y * zCount) + z)->val = v;
+	int pos = (x * height * depth) + (y * depth) + z;
+	(data + pos)->val = v;
 
-	return data + (x * yCount * zCount) + (y * zCount) + z;
+	return data + pos;
 }
 
 Tile* Region::GetTile(int x, int y, int z) {
@@ -122,23 +125,23 @@ Tile* Region::GetTile(int x, int y, int z) {
 		throw(std::logic_error("No region data to retrieve"));
 
 	//range is 0 to x - 1 inclusive, where x is the specified dimension
-	if (x >= xCount || y >= yCount || z >= zCount || x < 0 || y < 0 || z < 0)
+	if (x >= width || y >= height || z >= depth || x < 0 || y < 0 || z < 0)
 		throw(std::out_of_range("Specified tile index is out of range"));
 
 	//NOTE: data is stored as though it were data[x][y][z]
-	return data + (x * yCount * zCount) + (y * zCount) + z;
+	return data + (x * height * depth) + (y * depth) + z;
 }
 
-int Region::GetX() const {
-	return xCount;
+int Region::GetWidth() const {
+	return width;
 }
 
-int Region::GetY() const {
-	return yCount;
+int Region::GetHeight() const {
+	return height;
 }
 
-int Region::GetZ() const {
-	return zCount;
+int Region::GetDepth() const {
+	return depth;
 }
 
 int Region::GetSize() const {

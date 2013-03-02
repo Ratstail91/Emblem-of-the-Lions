@@ -1,7 +1,8 @@
-#include "map.h"
+#include "region.h"
 
 #include "SDL.h"
 
+//debugging
 #include <stdexcept>
 #include <iostream>
 
@@ -9,31 +10,17 @@ using namespace std;
 
 int SDL_main(int, char**) {
 	try {
-		cout << "Creating the map object" << endl;
-		Map map;
+		Region r;
 
-		cout << "Deleting any previous map" << endl;
-		map.Delete("foo");
+		r.New(10, 10, 2);
+		r.SetTile(3,0,0,42);
+		r.Save("region.txt");
 
-		cout << "Creating the new map" << endl;
-		map.New("foo", 50, 40, 3);
+		r.Load("region.txt");
+		cout << "--test: " << r.GetTile(3, 0, 0)->val << ", " << r.GetTile(0, 3, 0)->val << endl;
+		r.Save("region2.txt");
 
-		cout << "Freeing the map" << endl;
-		map.Free();
-
-		cout << "Loading the map again" << endl;
-		map.Load("foo");
-
-		cout << "Loaded map data:" << endl;
-		cout << "Map name: " << map.GetName() << endl;
-		cout << "RegionX: " << map.GetRegionX() << endl;
-		cout << "RegionY: " << map.GetRegionY() << endl;
-		cout << "RegionZ: " << map.GetRegionZ() << endl;
-
-		cout << "Freeing the map again" << endl;
-		map.Free();
-
-		cout << "Test completed." << endl;
+		r.Unload();
 	}
 	catch(runtime_error& e) {
 		cerr << "Runtime Error: " << e.what() << endl;
@@ -43,6 +30,5 @@ int SDL_main(int, char**) {
 		cerr << "Error: " << e.what() << endl;
 		return -2;
 	}
-
 	return 0;
 }

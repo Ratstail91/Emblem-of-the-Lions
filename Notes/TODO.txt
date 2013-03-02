@@ -1,3 +1,4 @@
 *	Get the map system working
 *	Consider revising the region save format
 		The new ranged based data structure doesn't mesh well with the previous format
+*	"RawGetTile" can skip checks, for speed
