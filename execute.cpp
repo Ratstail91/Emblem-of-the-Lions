@@ -71,7 +71,7 @@ int execute(sqlite3* db, const char* command) {
 int main(int argc, char* argv[]) {
 	sqlite3 *db;
 
-	if (sqlite3_open("db", &db) != SQLITE_OK) {
+	if (sqlite3_open("file.db", &db) != SQLITE_OK) {
 		cerr << "Failed to open the database" << endl;
 		sqlite3_close(db);
 		return 1;
