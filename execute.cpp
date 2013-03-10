@@ -49,6 +49,10 @@ int execute(sqlite3* db, const char* command) {
 						case SQLITE_NULL:
 							cout << "[null]";
 						break;
+
+						default:
+							cerr << "[unknown type]";
+						break;
 					}
 				}
 			break;
@@ -80,7 +84,7 @@ int main(int argc, char* argv[]) {
 	const char *command = "\
 	CREATE TABLE IF NOT EXISTS user ('name' TEXT,'age' NUMERIC,'cats' NUMERIC,'programmer' TEXT);\
 	INSERT INTO user VALUES('Kayne', 21, 5, 'true');\
-	INSERT INTO user VALUES('Chris', 22, 1, 'true');\
+	INSERT INTO user VALUES('Chris', 23, 1, 'true');\
 	INSERT INTO user VALUES('Logan', 21, 0, 'true');\
 	INSERT INTO user VALUES('Jordan', 17, 5, 'false');\
 	";
